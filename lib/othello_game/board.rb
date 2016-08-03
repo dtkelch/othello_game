@@ -2,7 +2,6 @@ class Board
 
   def initialize(options)
     board_hash = options.fetch(:board)
-    puts "board: " + board_hash.to_s
 
     @width = board_hash[:width]
     @height = board_hash[:height]

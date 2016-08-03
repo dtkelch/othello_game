@@ -20,14 +20,10 @@ class Parser
       end
     end.parse!
 
-    puts "IN PARSER"
-    puts options
     options
   end
 
   def parse_json(board_state)
-    puts "parse_json"
-    puts board_state
     JSON.parse(board_state, :symbolize_names => true)
   end
 
