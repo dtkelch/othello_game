@@ -7,6 +7,9 @@ require 'optparse'
 parser = Parser.new
 options = parser.parse_command_line_args(ARGV)
 
+# provide a default time if none given
+time = options.fetch(:time, 10000)
+
 board = Board.new(options)
 
 puts "\nhello"
