@@ -12,6 +12,8 @@ time = options.fetch(:time, 10000)
 
 board = Board.new(options)
 
+
 puts "\nhello"
 board.to_s
 puts "\nworld"
+board.get_valid_moves
