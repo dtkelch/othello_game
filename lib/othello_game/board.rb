@@ -29,6 +29,11 @@ class Board
   # lines the edges with "x", to make bounds checking easier
   def setup_squares
     #@squares.each_with_index do |s, i|
+
+
+    new_board = [@width * @height]
+    @max_index = new_board.length - 1
+
     (0..@max_index).each do |i|
       if @squares[i] == '-' && (i < @width || i > @max_index - @width || i % @width == 0 || i % @width == 7)
         @squares[i] = 'x'
@@ -38,6 +43,7 @@ class Board
 
   def get_valid_moves
     moves = []
+    opponent = @player == 'b' ? 'w' : 'b'
 
     # gets the index of all of the players pieces
     player_pieces = @squares.each_index.select{ |i| @squares[i] == @player }
@@ -45,8 +51,8 @@ class Board
 
     #vertical
     player_pieces.each do |i|
-      until @squares[i] == 'x' do
-        p @squares[i]
+      until @squares[i] == 'x' || @squares[i] == 'w' || @squares[i] == 'b' || @squares[i] == nil do
+         p @squares[i]
         i = i - 8
       end
 

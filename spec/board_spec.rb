@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe OthelloGame do
+describe Board do
   it 'has a version number' do
     expect(OthelloGame::VERSION).not_to be nil
   end
@@ -9,8 +9,8 @@ describe OthelloGame do
     expect(false).to eq(true)
   end
 
-  it 'creates a parser' do
-
+  it 'finds valid moves up' do
+    
   end
 
   it 'creates a board' do
