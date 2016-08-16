@@ -15,5 +15,5 @@ board = Board.new(options)
 puts "\n\n\n"
 
 board.to_s
-board.get_valid_moves
+board.valid_moves_for_player
 puts "\n\n\n"

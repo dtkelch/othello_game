@@ -1,15 +1,4 @@
 class Board
-  # TODO
-  # enum:
-  #   UP_LEFT: direction = -(@width+1), (block)bounds = < 8, outside of 0, 8, 16,...
-  #   UP: direction = -@width, bounds = < 8
-  #   UP_RIGHT: direction = -(@width-1), bounds = < 8, outside of 7, 15, 23,....
-  #   LEFT: direction = -1, bounds = outside of 0, 8, 16,...
-  #   RIGHT: direction = 1, bounds = outside of 7, 15, 23,...
-  #   DOWN_LEFT: direction = (@width-1), bounds > 56, outside of 0, 8, 16
-  #   DOWN: direction = @width, bounds > 56
-  #   DOWN_RIGHT: direction = (@width + 1), bounds > 56, outside of 7, 15, 23
-
   def initialize(options)
     board_hash = options.fetch(:board)
 
@@ -26,13 +15,16 @@ class Board
       @max_index = @squares.length - 1
     end
 
-    # TODO
-    @max_up = @width
-    @max_left = (0, @max_index, 8) #0, 8, 16, etc
-    @max_right= (@width-1, @max_index, 8) #7, 15, 23, etc
-    @max_down = @max_index-@width+1
-
-    @all_directions = [:up, :down, :left, :right, :up_left, :up_right, :down_left, :down_right]
+    @directions = {:up => -@width,
+                       :down => @width,
+                       :left => -1,
+                       :right => 1,
+                       :up_left => -(@width + 1),
+                       :up_right => -(@width -1),
+                       :down_left => (@width -1),
+                       :down_right => (@width + 1)
+                      }
+ 
 
     if @width != @height
       print "error"
@@ -45,30 +37,123 @@ class Board
     end
   end
 
-  # lines the edges with "x", to make bounds checking easier
-  def setup_squares
-    #@squares.each_with_index do |s, i|
+  def can_move_further(position, direction)
+    row = position / @width # int, round down
+    max_row = @max_index - @width + 1
+    row_start = row * @width
+    row_end = row_start + @width - 1
+    prev_start = row_start - @width
+    prev_end = row_end - @width
+    next_start = row_start + @width
+    next_end = row_end + @width
+    next_pos = position + @directions[direction]
 
-
-    # new_board = [@width * @height]
-    # @max_index = new_board.length - 1
-
-    # (0..@max_index).each do |i|
-      # if @squares[i] == '-' && (i < @width || i > @max_index - @width || i % @width == 0 || i % @width == 7)
-        # @squares[i] = 'x'
-      # end
-    # end
-
-    @width = @width + 2
-    @height = @height + 2
-    new_board = [(@width + 2) * (@height + 2)]
-    @max_index = new_board.length - 1
-
-    # offset = (i / 4) + @width
-
-
-
+    case direction
+    when :up
+      return row > 0
+    when :down
+      return row > 0
+    when :left
+      return position > row_start
+    when :right
+      return position < row_end
+    when :up_left
+      return row > 0 && next_pos >= prev_start
+    when :up_right
+      return row > 0 && next_pos <= prev_end
+    when :down_left
+      return row < max_row && next_pos >= next_start
+    when :down_right
+      return row < max_row && next_pos <= next_end
+    else
+      false
+    end
   end
+ 
+   def would_flip?(position, direction)
+    if can_move_further(position, direction)
+      position = position + direction
+      if @squares[position] == @opponent
+        index = find_bracketing_piece(position, direction)
+      end
+    end
+    index
+  end
+
+  def find_bracketing_piece(position, direction)
+    if @squares[position] == @player
+      can
+    end
+  end
+
+  def valid_move?(position)
+    position >= 0 && position <= @max_index && @squares[position] == '-'
+  end
+
+  def valid_moves_for_player
+    moves = []
+
+    player_pieces = @squares.each_index.select{ |i| @squares[i] == @player }
+
+    player_pieces.each do |i|
+      # (0..@max_index).each do |i|
+        @directions.each do |direction, v|
+          if can_move_further(i, direction)
+            p i, direction
+          end
+        # end
+      valid_move?(i)
+      end
+    end
+  end
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  # # lines the edges with "x", to make bounds checking easier
+  # def setup_squares
+  #   #@squares.each_with_index do |s, i|
+
+
+  #   # new_board = [@width * @height]
+  #   # @max_index = new_board.length - 1
+
+  #   # (0..@max_index).each do |i|
+  #     # if @squares[i] == '-' && (i < @width || i > @max_index - @width || i % @width == 0 || i % @width == 7)
+  #       # @squares[i] = 'x'
+  #     # end
+  #   # end
+
+  #   @width = @width + 2
+  #   @height = @height + 2
+  #   new_board = [(@width + 2) * (@height + 2)]
+  #   @max_index = new_board.length - 1
+
+  #   # offset = (i / 4) + @width
+
+
+
+  # end
+
+
+
+
+
+
+
+
+
 
   # def get_valid_moves
   #   moves = []
@@ -109,79 +194,6 @@ class Board
   #   moves
   # end
 
-  def get_valid_moves
-    moves = []
-
-    player_pieces = @squares.each_index.select{ |i| @squares[i] == @player }
-
-    player_pieces.each do |i|
-      @all_directions.each do |direction|
-        p i, direction
-    end
-  end
-
-  def would_flip?(position, direction)
-    if can_move_further(position, direction)
-      position = position + direction
-      if @squares[position] == @opponent
-        index = find_bracketing_piece(position, direction)
-      end
-    end
-    index
-  end
-
-  def find_bracketing_piece(position, direction)
-    if @squares[position] == @player
-      
-    end
-  end
-
-  def can_move_further(position, direction)
-    row = position / @width # int, round down
-    max_row = @max_index - @width + 1
-    row_start = row * width
-    row_end = row_start + @width - 1
-    prev_start = row_start - @width
-    prev_end = row_end - @width
-    next_start = row_start + @width
-    next_end = row_end + @width
-    next_pos = position + direction
-
-    if (direction == :up)
-      return row > 0
-    end
-
-    if (direction == :down)
-      return row < max_row
-    end
-
-    if (direction == :left)
-      return position > row_start
-    end
-
-    if (direction == :right)
-      return position < row_end
-    end
-
-    if (direction == :up_left)
-      return row > 0 and next_pos >= prev_start
-    end
-
-    if (direction == :up_right)
-      return row > 0 and next_pos <= prev_end
-    end
-
-    if (direction == :down_left)
-      return row < max_row and next_pos >= next_start
-    end
-
-    if (direction == :down_right)
-      return row < max_row and next_pos <= next_end
-    end
-  end
-
-
-end
 
 #  def is_valid_move (loc, direction, limit, points)
 #   dest = loc + offset

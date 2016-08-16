@@ -31,6 +31,12 @@ describe Board do
     expect(moves).to_eq([])
   end
 
+
+  it 'finds valid moves' do
+    moves = board.get_valid_moves
+    expect(moves).to_eq([])
+  end
+
   it 'creates a board' do
     
   end
