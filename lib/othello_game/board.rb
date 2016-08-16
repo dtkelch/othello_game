@@ -16,15 +16,15 @@ class Board
     end
 
     @directions = {:up => -@width,
-                       :down => @width,
-                       :left => -1,
-                       :right => 1,
-                       :up_left => -(@width + 1),
-                       :up_right => -(@width -1),
-                       :down_left => (@width -1),
-                       :down_right => (@width + 1)
-                      }
- 
+                    :down => @width,
+                    :left => -1,
+                    :right => 1,
+                    :up_left => -(@width + 1),
+                    :up_right => -(@width -1),
+                    :down_left => (@width -1),
+                    :down_right => (@width + 1)
+                  }
+
 
     if @width != @height
       print "error"
@@ -38,6 +38,7 @@ class Board
   end
 
   def can_move_further(position, direction)
+    d = @directions[direction]
     row = position / @width # int, round down
     max_row = @max_index - @width + 1
     row_start = row * @width
@@ -46,7 +47,7 @@ class Board
     prev_end = row_end - @width
     next_start = row_start + @width
     next_end = row_end + @width
-    next_pos = position + @directions[direction]
+    next_pos = position + d
 
     case direction
     when :up
@@ -69,8 +70,18 @@ class Board
       false
     end
   end
- 
-   def would_flip?(position, direction)
+
+  def find_bracketing_piece(position, direction)
+    if @squares[position] == @player
+      return position
+    elsif @squares[position] == @player && can_move_further(position, direction)
+      return find_bracketing_piece((position + directions[direction]), direction)
+    else
+      nil
+    end
+  end
+
+ def would_flip?(position, direction)
     if can_move_further(position, direction)
       position = position + direction
       if @squares[position] == @opponent
@@ -80,14 +91,35 @@ class Board
     index
   end
 
-  def find_bracketing_piece(position, direction)
-    if @squares[position] == @player
-      can
+  def valid_move?(position)
+    if position >= 0 && position <= @max_index && @squares[position] == '-'
+      @directions.each do |dir|
+        if would_flip?(position, dir)
+          return true
+          #TODO
+        end
+      end
+    end
+    false
+  end
+
+  def valid_moves
+    (0..@max_index).each do |i|
+      valid_move?(i)
     end
   end
 
-  def valid_move?(position)
-    position >= 0 && position <= @max_index && @squares[position] == '-'
+  def any_valid_move?
+    # valid_move?
+    true
+  end
+
+  def calculate_move #done
+    moves = [-1]
+    if any_valid_move?
+      moves = valid_moves
+    end
+    moves
   end
 
   def valid_moves_for_player
@@ -112,6 +144,38 @@ end
 
 
 
+# def can_move_further(position, direction)
+#   row = position / @width # int, round down
+#   max_row = @max_index - @width + 1
+#   row_start = row * @width
+#   row_end = row_start + @width - 1
+#   prev_start = row_start - @width
+#   prev_end = row_end - @width
+#   next_start = row_start + @width
+#   next_end = row_end + @width
+#   next_pos = position + @directions[direction]
+
+#   case direction
+#   when :up
+#     return row > 0
+#   when :down
+#     return row > 0
+#   when :left
+#     return position > row_start
+#   when :right
+#     return position < row_end
+#   when :up_left
+#     return row > 0 && next_pos >= prev_start
+#   when :up_right
+#     return row > 0 && next_pos <= prev_end
+#   when :down_left
+#     return row < max_row && next_pos >= next_start
+#   when :down_right
+#     return row < max_row && next_pos <= next_end
+#   else
+#     false
+#   end
+# end
 
 
 
