@@ -20,6 +20,7 @@ class Board
     # setup_squares
 
     @player = options.fetch(:player)
+    @opponent = @player == 'b' ? 'w' : 'b'
 
     if @max_index >= @squares.length
       @max_index = @squares.length - 1
@@ -30,6 +31,8 @@ class Board
     @max_left = (0, @max_index, 8) #0, 8, 16, etc
     @max_right= (@width-1, @max_index, 8) #7, 15, 23, etc
     @max_down = @max_index-@width+1
+
+    @all_directions = [:up, :down, :left, :right, :up_left, :up_right, :down_left, :down_right]
 
     if @width != @height
       print "error"
@@ -67,110 +70,158 @@ class Board
 
   end
 
+  # def get_valid_moves
+  #   moves = []
+  #   @opponent = @player == 'b' ? 'w' : 'b'
+
+  #   # gets the index of all of the players pieces
+  #   player_pieces = @squares.each_index.select{ |i| @squares[i] == @player }
+  #   p player_pieces
+
+  #   left_edge = []
+  #   top_edge = 0
+  #   bottom_edge = 0
+  #   right_edge = []
+
+  #   [(-(@width + 1), -2), -@width, -(@width - 1), -1, 1, (@width - 1), @width, (@width + 1)].each do |offset|
+  #     p offset
+  #   end
+  #   #vertical
+  #   limit = @width
+  #   player_pieces.each do |i|
+  #     until @squares[i] == '-' || i <= limit do
+  #     # while @squares[i] == @opponent && i > limit do
+  #       # i = i + offset
+  #        p @squares[i]
+  #       i = i + offset
+  #     end
+
+  #   end
+
+  #   #horizontal
+
+  #   #diagonal
+  #   # down left -> right
+  #   # up left -> right
+  #   # down right -> left
+  #   # up left -> right
+
+  #   moves
+  # end
+
   def get_valid_moves
     moves = []
-    opponent = @player == 'b' ? 'w' : 'b'
 
-    # gets the index of all of the players pieces
     player_pieces = @squares.each_index.select{ |i| @squares[i] == @player }
-    p player_pieces
 
-    left_edge = []
-    top_edge = 0
-    bottom_edge = 0
-    right_edge = []
-
-    [(-(@width + 1), -2), -@width, -(@width - 1), -1, 1, (@width - 1), @width, (@width + 1)].each do |offset|
-      p offset
-    end
-    #vertical
-    limit = @width
     player_pieces.each do |i|
-      until @squares[i] == '-' || i <= limit do
-      # while @squares[i] == opponent && i > limit do
-        # i = i + offset
-         p @squares[i]
-        i = i + offset
-      end
+      @all_directions.each do |direction|
+        p i, direction
+    end
+  end
 
+  def would_flip?(position, direction)
+    if can_move_further(position, direction)
+      position = position + direction
+      if @squares[position] == @opponent
+        index = find_bracketing_piece(position, direction)
+      end
+    end
+    index
+  end
+
+  def find_bracketing_piece(position, direction)
+    if @squares[position] == @player
+      
+    end
+  end
+
+  def can_move_further(position, direction)
+    row = position / @width # int, round down
+    max_row = @max_index - @width + 1
+    row_start = row * width
+    row_end = row_start + @width - 1
+    prev_start = row_start - @width
+    prev_end = row_end - @width
+    next_start = row_start + @width
+    next_end = row_end + @width
+    next_pos = position + direction
+
+    if (direction == :up)
+      return row > 0
     end
 
-    #horizontal
+    if (direction == :down)
+      return row < max_row
+    end
 
-    #diagonal
-    # down left -> right
-    # up left -> right
-    # down right -> left
-    # up left -> right
+    if (direction == :left)
+      return position > row_start
+    end
 
-    moves
+    if (direction == :right)
+      return position < row_end
+    end
+
+    if (direction == :up_left)
+      return row > 0 and next_pos >= prev_start
+    end
+
+    if (direction == :up_right)
+      return row > 0 and next_pos <= prev_end
+    end
+
+    if (direction == :down_left)
+      return row < max_row and next_pos >= next_start
+    end
+
+    if (direction == :down_right)
+      return row < max_row and next_pos <= next_end
+    end
   end
-
-
 
 
 end
 
-def is_valid_move (loc, direction, limit, points)
-  dest = loc + offset
-  opponent = @player == 'b' ? 'w' : 'b'
-  if valid
-    points = points + 1
-    is_valid_move(dest, direction, limit, points)
-  end
-end
+#  def is_valid_move (loc, direction, limit, points)
+#   dest = loc + offset
+#   @opponent = @player == 'b' ? 'w' : 'b'
+#   if valid
+#     points = points + 1
+#     is_valid_move(dest, direction, limit, points)
+#   end
+# end
 
-def is_valid_move (loc, direction, limit, points)
-  direction = -8
-  limit = 8
-  dest = loc + offset
-  opponent = @player == 'b' ? 'w' : 'b'
-  if valid
-    points = points + 1
-    is_valid_move(dest, direction, limit, points)
-  end
-end
+# def is_valid_move (loc, direction, limit, points)
+#   direction = -8
+#   limit = 8
+#   dest = loc + offset
+#   @opponent = @player == 'b' ? 'w' : 'b'
+#   if valid
+#     points = points + 1
+#     is_valid_move(dest, direction, limit, points)
+#   end
+# end
 
-def is_valid_move (position, direction)
-  row = position / @width # int, round down
-  max_row = @max_index - @width + 1
-  row_start = row * width
-  row_end = row_start + @width - 1
-  prev_start = row_start - @width
-  prev_end = row_end - @width
-  next_start = row_start + @width
-  next_end = row_end + @width
-  next_pos = position + direction
 
-  if (direction == :up)
-    return row > 0
-  end
 
-  if (direction == :down)
-    return row < max_row
-  end
 
-  if (direction == :left)
-    return position > row_start
-  end
 
-  if (direction == :right)
-    return position < row_end
-  end
 
-  if (direction == :up_left)
-    return row > 0 and next_pos >= prev_start
-  end
 
-  if (direction == :up_right)
-    return row > 0 and next_pos <= prev_end
-  end
 
-  if (direction == :down_left)
-    return row < max_row and next_pos >= next_start
-  end
 
-  if (direction == :down_right)
-    return row < max_row and next_pos <= next_end
-  end
-end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
