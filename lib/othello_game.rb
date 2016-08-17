@@ -16,9 +16,18 @@ require 'optparse'
 
   board.to_s
   #board.valid_moves_for_player
-  board.calculate_move
+  moves = board.calculate_move
+  if moves
+    n = moves.length - 1
+    move = moves[rand(0..n)]
+    p move
+    exit(move)
+  else
+    exit(-1)
+  end
   puts "\n\n\n"
 else
   puts "no options given"
+  exit(-1)
 end
 

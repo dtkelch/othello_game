@@ -83,38 +83,34 @@ class Board
   end
 
  def would_flip?(position, direction)
-   index = -1
     if can_move_further(position, direction)
       position = position + @directions[direction]
       index = find_bracketing_piece(position, direction)
       if @squares[position] == @opponent && index
-        return index
+         return true
       end
     end
-    index
+    false
   end
 
   def valid_move?(position)
     moves = []
     if position >= 0 && position <= @max_index && @squares[position] == '-'
       @directions.each do |dir, val|
-        i = would_flip?(position, dir)
-        if i != -1
-          return position
+        if would_flip?(position, dir)
+          print position, " ", dir, "\n"
+          return true
         end
-        print position, " ", i, " ", dir, "\n"
-            #TODO
       end
     end
-    moves
+    false
   end
 
   def valid_moves
     moves = []
     (0..@max_index).each do |i|
-      move = valid_move?(i)
-      if move != -1
-        moves << valid_move?(i)
+      if valid_move?(i)
+        moves << i
       end
     end
     moves
