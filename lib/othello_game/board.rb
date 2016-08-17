@@ -40,7 +40,8 @@ class Board
   def can_move_further(position, direction)
     d = @directions[direction]
     row = position / @width # int, round down
-    max_row = @max_index - @width + 1
+    print "Row: ", row, "\n"
+    max_row = @width - 1
     row_start = row * @width
     row_end = row_start + @width - 1
     prev_start = row_start - @width
@@ -53,7 +54,7 @@ class Board
     when :up
       return row > 0
     when :down
-      return row > 0
+      return row < max_row
     when :left
       return position > row_start
     when :right
@@ -74,8 +75,8 @@ class Board
   def find_bracketing_piece(position, direction)
     if @squares[position] == @player
       return position
-    elsif @squares[position] == @player && can_move_further(position, direction)
-      return find_bracketing_piece((position + directions[direction]), direction)
+    elsif @squares[position] == @opponent && can_move_further(position, direction)
+      return find_bracketing_piece((position + @directions[direction]), direction)
     else
       nil
     end
@@ -85,30 +86,38 @@ class Board
    index = -1
     if can_move_further(position, direction)
       position = position + @directions[direction]
-      if @squares[position] == @opponent
-        index = find_bracketing_piece(position, direction)
+      index = find_bracketing_piece(position, direction)
+      if @squares[position] == @opponent && index
+        return index
       end
     end
     index
   end
 
   def valid_move?(position)
+    moves = []
     if position >= 0 && position <= @max_index && @squares[position] == '-'
       @directions.each do |dir, val|
         i = would_flip?(position, dir)
-        if i
-          print position, " ", i, " ", dir, "\n"
-            #TODO
+        if i != -1
+          return position
         end
+        print position, " ", i, " ", dir, "\n"
+            #TODO
       end
     end
-    false
+    moves
   end
 
   def valid_moves
+    moves = []
     (0..@max_index).each do |i|
-      valid_move?(i)
+      move = valid_move?(i)
+      if move != -1
+        moves << valid_move?(i)
+      end
     end
+    moves
   end
 
   def any_valid_move?
