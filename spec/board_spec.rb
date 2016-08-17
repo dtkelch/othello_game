@@ -33,7 +33,7 @@ describe Board do
   end
 
   it 'can calculate move' do
-    expect(@board.calculate_move.length).to eql(1)
+    expect(@board.calculate_move.length).to eql(4)
   end
 
   it 'has valid moves' do
@@ -41,11 +41,11 @@ describe Board do
   end
 
   it 'computes a valid move at position 19' do
-    expect(@board.valid_move?(19)).to eql(19)
+    expect(@board.valid_move?(19)).to eql(true)
   end
 
-  it 'computes no valid moves at position 1' do
-    expect(@board.valid_move?(1)).to eql(-1)
+  it 'computes no valid moves at position false' do
+    expect(@board.valid_move?(1)).to eql(false)
   end
 
 end

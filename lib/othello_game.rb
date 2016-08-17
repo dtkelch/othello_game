@@ -16,13 +16,13 @@ require 'bundler/setup'
 
   board = Board.new(options)
 
-  board.to_s
+  # board.to_s
   #board.valid_moves_for_player
   moves = board.calculate_move
   if moves.length
     n = moves.length - 1
     move = moves[rand(0..n)]
-    p move
+    # p move
     exit(move)
   else
     exit(-1)

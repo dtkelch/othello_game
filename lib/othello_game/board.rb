@@ -132,31 +132,29 @@ class Board
     if any_valid_move?
       moves = valid_moves
     end
-    p moves
+    # TODO find a better heuristic than a random move
     moves
-  end
-
-  def valid_moves_for_player
-    moves = []
-
-    player_pieces = @squares.each_index.select{ |i| @squares[i] == @player }
-
-    player_pieces.each do |i|
-      # (0..@max_index).each do |i|
-        @directions.each do |direction, v|
-          if can_move_further(i, direction)
-            p i, direction
-          end
-        # end
-      valid_move?(i)
-      end
-    end
   end
 end
 
 
 
+# def valid_moves_for_player
+#   moves = []
 
+#   player_pieces = @squares.each_index.select{ |i| @squares[i] == @player }
+
+#   player_pieces.each do |i|
+#     # (0..@max_index).each do |i|
+#       @directions.each do |direction, v|
+#         if can_move_further(i, direction)
+#           p i, direction
+#         end
+#       # end
+#     valid_move?(i)
+#     end
+#   end
+# end
 
 # def can_move_further(position, direction)
 #   row = position / @width # int, round down
