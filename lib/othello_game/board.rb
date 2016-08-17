@@ -9,7 +9,13 @@ class Board
     # setup_squares
 
     @player = options.fetch(:player)
-    @opponent = @player == 'b' ? 'w' : 'b'
+    if @player == 'b' || @player == 'black'
+      @player = 'b'
+      @opponent = 'w'
+    else
+      @player = 'w'
+      @opponent = 'b'
+    end
 
     if @max_index >= @squares.length
       @max_index = @squares.length - 1
@@ -40,7 +46,6 @@ class Board
   def can_move_further(position, direction)
     d = @directions[direction]
     row = position / @width # int, round down
-    print "Row: ", row, "\n"
     max_row = @width - 1
     row_start = row * @width
     row_end = row_start + @width - 1
@@ -95,10 +100,9 @@ class Board
 
   def valid_move?(position)
     moves = []
-    if position >= 0 && position <= @max_index && @squares[position] == '-'
+    if position >= 0 && position <= @max_index && @squares[position] == "-"
       @directions.each do |dir, val|
         if would_flip?(position, dir)
-          print position, " ", dir, "\n"
           return true
         end
       end
@@ -108,8 +112,10 @@ class Board
 
   def valid_moves
     moves = []
+    p "here in valid_moves"
     (0..@max_index).each do |i|
       if valid_move?(i)
+        print "move: ", i, "\n"
         moves << i
       end
     end
