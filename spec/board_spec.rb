@@ -20,7 +20,7 @@ describe Board do
                 }
             }
     @board = Board.new(@options)
-    @valid_moves = [19, 26, 37, 43]
+    @valid_moves = [19, 26, 37, 44]
     end
   it 'finds valid moves' do
     # board = Board.new(@options)
