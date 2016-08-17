@@ -115,7 +115,6 @@ class Board
     p "here in valid_moves"
     (0..@max_index).each do |i|
       if valid_move?(i)
-        print "move: ", i, "\n"
         moves << i
       end
     end
@@ -127,13 +126,48 @@ class Board
     true
   end
 
+  def calculate_best_move(moves)
+    n = moves.length - 1
+    move = moves[rand(0..n)]
+
+    if @width == 8
+      weights = [
+     120, -20, 20,  5,  5, 20, -20, 120,
+     -20, -40, -5, -5, -5, -5, -40, -20,
+      20,  -5, 15,  3,  3, 15,  -5, 20,
+       5,  -5,  3,  3,  3,  3,  -5,   5,
+       5,  -5,  3,  3,  3,  3,  -5,   5,
+      20,  -5, 15,  3,  3, 15,  -5,  20,
+     -20, -40, -5, -5, -5, -5, -40, -20,
+     120, -20, 20,  5,  5, 20, -20, 120
+      ]
+      max = -50
+      move = 0
+      print "moves: ", moves, "\n"
+      moves.each do |i|
+        print "i: ", i, "\n"
+        print "move: ", move, "\n"
+        print "max: ", max, "\n"
+        if weights[i] > max
+
+          max = weights[i]
+          move = i
+          print "new move: ", move, "\n"
+          print "new max: ", max, "\n"
+        end
+      end
+    end
+    move
+  end
   def calculate_move #done
     moves = [-1]
     if any_valid_move?
       moves = valid_moves
     end
+
     # TODO find a better heuristic than a random move
-    moves
+
+    move = calculate_best_move(moves)
   end
 end
 

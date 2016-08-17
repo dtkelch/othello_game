@@ -18,11 +18,8 @@ require 'bundler/setup'
 
   # board.to_s
   #board.valid_moves_for_player
-  moves = board.calculate_move
-  if moves.length
-    n = moves.length - 1
-    move = moves[rand(0..n)]
-    # p move
+  move = board.calculate_move
+  if move
     exit(move)
   else
     exit(-1)
